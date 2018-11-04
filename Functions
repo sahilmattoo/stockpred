@@ -1,0 +1,65 @@
+#Initiate
+Sys.setenv(TZ = 'IST')  # Allows quantstrat to use timestamps
+currency("INR")  # Currency being used
+start <- as.Date("2017-09-01")
+end <- as.Date("2017-12-01")
+
+#Functions
+
+# Find Covarance Percentage
+cofvar <- function(val){
+  meanval = mean(val)
+  sdval = sd(val)
+  cov = (sdval/meanval)*100
+  # Y = pnorm(val, mean = meanval, sd = sdval)
+  # plot(Y)
+  return(cov)
+}
+
+#Chainkin function
+chainkin <- function(df){
+  cmf <- CMF(df[,c("High","Low","Close")],df[,"Volume"])
+  return(cmf)
+}
+
+chainkinband <- function(df){
+  # Identify Negative and Positive
+  cmfv = ifelse(df>0,"Buy","Sell")
+  return(cmfv)
+}
+
+bollband <- function(df){
+  tbc<- BBands(df[,"Close"] )
+  return(tbc)
+}
+
+
+showchart <- function(V){
+  chartSeries(V,
+              type = c("auto", "candlesticks", "matchsticks", "bars","line"), 
+              subset = NULL,
+              show.grid = TRUE, 
+              name = NULL,
+              time.scale = NULL,
+              TA = 'addVo()',
+              TAsep=';',
+              line.type = "l",
+              bar.type = "ohlc",
+              theme = chartTheme("black"),
+              layout = NA,
+              major.ticks='auto', minor.ticks=TRUE)
+  
+}
+
+
+calcADX <- function(adxval){
+  tr = ifelse(adxval<25,"Weak Trend", ifelse(adxval<50,"Strong Trend", 
+              ifelse(adxval<75,"Very Strong Trend","Extremely Strong Trend")))
+  return(tr)
+}  
+AROONTREND <- function(Up,Dn,d){
+  LB = ifelse(Up>70,'SELL',ifelse(Dn<30,'BUY','HOLD'))
+  d$Label=LB # DoesntWork
+  
+}
+
