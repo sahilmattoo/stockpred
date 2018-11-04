@@ -1,0 +1,14 @@
+library(quantmod)
+library(VIM)
+library(magrittr)
+library(devtools)
+library(digest)
+library(devtools)
+library(FinancialInstrument)
+library(PerformanceAnalytics)
+library(TTR)
+#library(quantstrat)
+library(data.table) # Rename Column Names
+library(xts) # convert data frame into XTS
+library(tibble)
+library(dplyr) # to get tlb type frame to run ADX
