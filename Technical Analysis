@@ -1,0 +1,63 @@
+
+# Replace df and ndf with  suitable names to make it generic
+
+#Maruti
+getSymbols("MARUTI.NS", src = "yahoo", from = start, to = end)
+ndf <- MARUTI.NS
+Maruti <- MARUTI.NS
+Maruti <- as.data.frame(Maruti) # Convert from "xts" "zoo"
+
+df <- Maruti # Create generic dataframe for usage
+tlb_dataframe<-as.tbl(df) # To use ADX function with type tld_df
+
+colnames(df)
+setnames(df, old=c("MARUTI.NS.Open","MARUTI.NS.High","MARUTI.NS.Low",
+                       "MARUTI.NS.Close","MARUTI.NS.Volume", "MARUTI.NS.Adjusted" ), 
+                 new=c("Open","High","Low","Close", "Volume", "Adjusted"))
+
+attach(df)
+hist(Close, col = "Blue")
+
+coeffcient_of_variance = cofvar(Close) 
+
+##### VOLUME
+# Calculate CMF - Chaikin Money Flow - Accumulation / Distribution 
+cmf = chainkin(df)
+df$cmf <- cmf
+cmfb = chainkinband(df$cmf)
+df$cmfb <- cmfb
+
+##### VOLATALITY
+#Bollinger Bands - Gives High Band and Low Band - 
+sc <- showchart(ndf)
+addMACD()             
+
+Bband <- bollband(df)
+Bband = as.data.frame(Bband)
+df$UpperLimitBB <- Bband$up
+df$LowerLimitBB <- Bband$dn
+
+# ADX - Trend Indicator
+adxval <- ADX((tlb_dataframe[,c("High","Low","Close")]), n=10)
+adxval = as.data.frame(adxval)
+adxval
+
+adxtrend <- calcADX(adxval$ADX) # Find the ADX Trend Based upon its Range
+df$adxTrend <- adxtrend
+
+# This Graph is Optional
+addADX(n = 20, maType="EMA", wilder=TRUE)
+
+
+# AROON
+
+Aroontrend <- aroon( df[,c("High", "Low")], n=20 )
+Aroontrend = as.data.frame(Aroontrend)
+colnames(Aroontrend)
+df$AroonUP = Aroontrend$aroonUp
+df$AroonDn = Aroontrend$aroonDn
+df$Oscillator = Aroontrend$oscillator
+### aroonup is above 70 - Strong trend
+### aroonup is below 30 - week trend
+LB <- AROONTREND(df$AroonUP,df$AroonDn,df)
+df$Label <- LB
