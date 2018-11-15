@@ -1,0 +1,10 @@
+# TestModel
+
+colnames(FPdf) # Verify the Columns
+colnames(test)
+
+#Model is RF (RandomForest)
+# Predict 
+Forecast_Pred = predict(RF, newdata = FPdf)
+FPdf$Forecast = Forecast_Pred
+
