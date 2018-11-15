@@ -1,0 +1,98 @@
+records <- dim(df)[1]
+st = records -20
+FDates = 41 # Future dates
+
+# Last 20 Records
+DF1 <- df[st:records,c(1:5)] #records from Historical Data # 
+DF2 <- Newdf # This is a forcasted Data Frame
+
+# colnames(DF1)
+# colnames(DF2)
+
+C<- dim(DF1)[1]+dim(DF2)[1]
+
+# Merge Two Data Frames
+NNDF1 <- data.frame(1:C)
+NNDF1$Open <- c(DF1$Open,DF2$Open)
+NNDF1$High <- c(DF1$Open,DF2$High)
+NNDF1$Low <- c(DF1$Open,DF2$Low)
+NNDF1$Close <- c(DF1$Close,DF2$Close)
+NNDF1$Volume <- c(DF1$Open,DF2$Volume)
+Pdf <- NNDF1
+
+##### VOLUME
+
+# Calculate CMF - Chaikin Money Flow - Accumulation / Distribution 
+# cmf = chainkin(Pdf)
+# Pdf$cmf <- cmf
+# cmfb = chainkinband(Pdf$cmf)
+# Pdf$cmfb <- cmfb
+
+
+
+##### VOLATALITY
+#Bollinger Bands - Gives High Band and Low Band - 
+# sc <- showchart(ndf)
+# addMACD()             
+
+Bband <- bollband(Pdf)
+Bband = as.data.frame(Bband)
+Pdf$UpperLimitBB <- Bband$up
+Pdf$LowerLimitBB <- Bband$dn
+
+Ptlb_dataframe<-as.tbl(Pdf) # To use ADX function with type tld_df
+
+# ADX - Trend Indicator
+adxval <- ADX((Ptlb_dataframe[,c("High","Low","Close")]), n=10)
+adxval = as.data.frame(adxval)
+#adxval
+Pdf$DIp <- adxval$DIp
+Pdf$DIn <- adxval$DIn
+Pdf$Dx  <- adxval$DX
+Pdf$ADX <-adxval$ADX
+
+#adxtrend <- calcADX(adxval$ADX) # Find the ADX Trend Based upon its Range
+#Pdf$adxTrend <- adxtrend
+
+
+# This Graph is Optional
+#addADX(n = 20, maType="EMA", wilder=TRUE)
+
+
+# AROON
+
+Aroontrend <- aroon( Pdf[,c("High", "Low")], n=20 )
+Aroontrend = as.data.frame(Aroontrend)
+colnames(Aroontrend)
+Pdf$AroonUP = Aroontrend$aroonUp
+Pdf$AroonDn = Aroontrend$aroonDn
+Pdf$Oscillator = Aroontrend$oscillator
+### aroonup is above 70 - Strong trend
+### aroonup is below 30 - week trend
+PLB <- AROONTREND(Pdf$AroonUP,Pdf$AroonDn,Pdf)
+#Pdf$Label <- PLB
+#str(df)
+
+
+dim(DF1)[1]
+# Final Data Frame for Prediction
+FPdf<- Pdf[c(21:C),]
+
+latest_date = as.Date(end, format = "%m/%d/%Y")
+str(latest_date)
+
+future_dates = seq(latest_date,length.out = FDates, by = "1 day")
+future_dates[!weekdays(future_dates) %in% c("Sunday", "Saturday")]
+
+length(FPdf$Close)
+
+FPdf$X1.C = future_dates
+
+setnames(FPdf, old=("X1.C"), 
+         new=("Dates"))
+
+#View(FPdf)
+# Go to KFOLD
+# This Data Set will be used in Test Model File
+
+
