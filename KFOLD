@@ -1,0 +1,91 @@
+# Machine Learning
+#Create a Machine Learning Data Frame
+MLdf <- df
+dim(MLdf)
+# Clean the data frame with the required fields
+colnames(MLdf)
+str(MLdf)
+# Convert to Factors into Levels
+# cmfb
+# adxtrend
+# label1
+# Oscilate
+# PredictY
+
+# Create DF form Machine Learning Data Frame
+MLdf1 <- MLdf
+
+# Drop Tables
+MLdf1$cmfb = NULL
+MLdf1$adxTrend = NULL
+MLdf1$Label1 = NULL
+MLdf1$Oscilate = NULL
+
+# Convert Dependent Variable into Factors
+MLdf1$PredictY <- as.factor(MLdf1$PredictY)
+
+# Create Data Frame for Random Forest
+RFDF1<- MLdf1
+dim(RFDF1) #1684   15
+
+#colnames(RFDF1)
+#summary(RFDF1)
+#which(is.na(RFDF1))
+
+# Impute NA Values
+RFDF1 <-na.omit(RFDF1)
+# Test Without Scaling
+
+# Split The Date Set
+#library(caTools)
+set.seed(123)
+split = sample.split(RFDF1$PredictY, SplitRatio = 0.8) # Gives values in True and False
+train = subset(RFDF1, split == TRUE)
+test = subset(RFDF1, split == FALSE)
+
+### IF YOU DONT GET THE SAME DIM THEN YOU HAVE NOT CLEARED THE Mu1,Mu2 col from Technical Analysis
+dim(train) # 1315   15
+dim(test) #328  15
+
+which(is.na(test)) # This Should Be Zero
+
+RF = randomForest(train$PredictY ~ .,
+                  data =train, 
+                  ntree=10)
+
+varImpPlot(RF)                       
+
+# Predict 
+Y_Pred = predict(RF, newdata = test)
+test$YPRED = Y_Pred
+mean(Y_Pred==test$PredictY)
+#Accuracy ->0.8389058
+#View(test)
+cm  = table(test$PredictY, Y_Pred)
+cm
+################# KFOLD
+
+# Applying k-Fold Cross Validation
+# install.packages('caret')
+#library(caret)
+folds = createFolds(train$PredictY, k = 10)
+# Function will find the accuracy of each fold
+cv = lapply(folds, function(x) {
+  training_fold = train[-x, ]
+  test_fold = train[x, ]
+  # classifier = xgboost(data = as.matrix(training_set[-11]), label = training_set$Exited, nrounds = 10)
+  # y_pred = predict(classifier, newdata = as.matrix(test_fold[-11]))
+  # y_pred = (y_pred >= 0.5)
+  # cm = table(test_fold[, 11], y_pred)
+  RF1 = randomForest(training_fold$PredictY ~ .,
+                    data =training_fold)
+  Y_Pred = predict(RF1, newdata = test_fold)
+  cm  = table(test_fold$PredictY, Y_Pred)
+  accuracy = (cm[1,1] + cm[2,2]) / (cm[1,1] + cm[2,2] + cm[1,2] + cm[2,1])
+  return(accuracy)
+})
+accuracy = mean(as.numeric(cv))
+accuracy
+# Forecast the Model
+
+
