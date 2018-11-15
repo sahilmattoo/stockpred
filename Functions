@@ -1,8 +1,8 @@
 #Initiate
-Sys.setenv(TZ = 'IST')  # Allows quantstrat to use timestamps
+Sys.setenv(TZ = 'Asia/Kolkata')  # Allows quantstrat to use timestamps
 currency("INR")  # Currency being used
-start <- as.Date("2017-09-01")
-end <- as.Date("2017-12-01")
+start <- as.Date("2012-01-01")
+end <- as.Date("2018-11-01")
 
 #Functions
 
@@ -63,3 +63,53 @@ AROONTREND <- function(Up,Dn,d){
   
 }
 
+AROONTREND1 <- function(Up,Dn){
+  LB = ifelse(Dn>Up,'SELL','BUY')
+}
+
+OSC <- function(Os){
+  LB = ifelse(Os>50,'Buy',ifelse(Os<(-50),"Sell","Hold"))
+}
+data.timeseries <- function(val, H){
+  data.ts =ts(val, frequency = 5) 
+  model_arima <- auto.arima(data.ts)
+  FC<-forecast(model_arima, h=H)
+  return(FC)
+}
+
+
+
+
+#rm(Newdf)
+
+# createnewdf <- function(N,H){
+#   Newdf = c(1:H)
+#   Newdf = as.data.frame(Newdf)
+#   Newdf$Open = c(1:H)
+#   Newdf$High = c(1:H)
+#   Newdf$Close = c(1:H)
+#   Newdf$Low = c(1:H)
+#   Newdf$Volume = c(1:H)
+#   
+# }
+
+### Day Trading
+## find range
+## Upper Limit
+UpperRange <- function(X){
+  XHigh<- X$High
+  XHigh <- as.data.frame(XHigh)
+  M<-XHigh %>% top_n(100)
+  M <- as.data.frame(M)
+  UR <-(sum(M[1:100,]))/100
+  return(UR)
+} 
+
+LowerRange <-function(X){
+  XLow<- X$Low
+  XLow <- as.data.frame(XLow)
+  M<-XLow %>% top_n(100)
+  M <- as.data.frame(M)
+  LR <-(sum(M[1:100,]))/100
+  return(LR)
+} 
