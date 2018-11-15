@@ -10,5 +10,18 @@ library(TTR)
 #library(quantstrat)
 library(data.table) # Rename Column Names
 library(xts) # convert data frame into XTS
-library(tibble)
+#library(tibble)
 library(dplyr) # to get tlb type frame to run ADX
+#Forecasting
+library(forecast)
+#library(ggplot2)
+#library(plotly)
+#library(ggfortify)
+library(tseries)
+library(gridExtra)
+library(docstring)
+library(readr)
+library(caTools) # Data Partitioning
+library(e1071)
+library(caret)
+library(randomForest) # Random Forest 
