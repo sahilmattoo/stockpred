@@ -1,0 +1,45 @@
+#Forecasting
+#Define Time-Frame - 20 + 20
+H = 40
+Newdf <- data.frame()
+Newdf = c(1:H)
+Newdf = as.data.frame(Newdf)
+Newdf$Open = c(1:H)
+Newdf$High = c(1:H)
+Newdf$Close = c(1:H)
+Newdf$Low = c(1:H)
+Newdf$Volume = c(1:H)
+
+# Convert to Time Series data
+col_name <- foredf$Open # foredf DF was kept to have the initial image
+dts <- data.timeseries(col_name, H)
+dts = as.data.frame(dts)
+Newdf$Open <- dts$`Point Forecast`
+
+col_name <- foredf$High
+dts <- data.timeseries(col_name, H)
+dts = as.data.frame(dts)
+Newdf$High <- dts$`Point Forecast`
+
+col_name <- foredf$Low
+dts <- data.timeseries(col_name, H)
+dts = as.data.frame(dts)
+Newdf$Low <- dts$`Point Forecast`
+
+col_name <- foredf$Close
+dts <- data.timeseries(col_name, H)
+dts = as.data.frame(dts)
+Newdf$Close <- dts$`Point Forecast`
+
+
+col_name <- foredf$Volume
+dts <- data.timeseries(col_name, H)
+dts = as.data.frame(dts)
+Newdf$Volume <- dts$`Point Forecast`
+
+colnames(Newdf)
+
+Newdf$Newdf = NULL
+
+# RUN PREDICTION FILE TO FIND THE TECHNICAL TRENDS ON FORECAST VALUE
+
